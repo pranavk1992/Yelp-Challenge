@@ -146,8 +146,8 @@ public class business {
 		business.businessJSON valueBusiness = obj.new businessJSON();
 		business.tipsJSON valueTips = obj.new tipsJSON();
 		
-		String filepathBusiness = "E:/Fall 2015/Search/Project/yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_business.json";
-		String filepathTips = "E:/Fall 2015/Search/Project/yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_tip.json";
+		String filepathBusiness = "D:/Lectures/Fall 15/Search/yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_business.json";
+		String filepathTips = "D:/Lectures/Fall 15/Search/yelp_dataset_challenge_academic_dataset/yelp_academic_dataset_tip.json";
 		
 		mapBusiness = obj.convertToStringBusiness(filepathBusiness);
 		mapTips = obj.convertToStringTips(filepathTips);
@@ -161,7 +161,7 @@ public class business {
 			//System.out.println(valueBusiness.city);
 			counterBusiness++;
 		}
-		System.out.println("Number of records in Business: " + counterBusiness);
+		System.out.println("Number of records in Business: " + mapBusiness.size());
 		
 		int counterTips = 0;
 		for(Map.Entry<String, Object> entry:mapTips.entrySet())
@@ -171,6 +171,6 @@ public class business {
 			//System.out.println("ID:" + valueTips.business_id + " Text: " + valueTips.tipText);
 			counterTips++;
 		}
-		System.out.println("Number of records in Tips: " + counterTips);
+		System.out.println("Number of records in Tips: " + mapTips.size());
 	}
 }
