@@ -25,14 +25,12 @@ public class ArffFileCreator {
 		BufferedReader br1 = new BufferedReader(new FileReader(f));
 
 		String s = "";
-		int rows = 0;
 		HashMap<String, Integer> wordStatus = new HashMap<String, Integer>();
 		HashMap<String, HashMap<String, Integer>> dataMap = new HashMap<String, HashMap<String, Integer>>();
 		String[] words = new String[3];
 		String word, sub, category;
 
 		while ((s = br1.readLine()) != null) {
-			rows++;
 			sub = s.substring(s.indexOf("[") + 1, s.indexOf("]"));
 			if (sub.length() > 0) {
 				words = sub.split(",");
