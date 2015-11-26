@@ -77,6 +77,7 @@ public class ArffFileCreator {
 		for (String att : wordStatus.keySet()) {
 			arffWriter.write("@attribute " + att + " integer\n");
 		}
+		arffWriter.write("@attribute class string\n");
 
 		arffWriter.write("\n@data\n\n");
 
