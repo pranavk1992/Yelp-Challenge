@@ -1,6 +1,9 @@
 package yelp;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
@@ -26,6 +29,8 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.ling.Sentence;
@@ -38,7 +43,9 @@ public class Reason {
 	
 	
 	public HashMap<String, Integer> getReasonSentence(String text)
-	{		
+	{	
+		Reason obj = new Reason();
+		
 		String path = "C:/Users/Pranav/Downloads/stanford-postagger-2015-04-20/stanford-postagger-2015-04-20/models/english-left3words-distsim.tagger";
 		text = text.toLowerCase();
 		MaxentTagger tagger = new MaxentTagger(path);
@@ -81,9 +88,8 @@ public class Reason {
 					split[i] = split[i].replace("_NN", "");
 					nouns.add(split[i]);					
 				}
-			}
-			//System.out.println("----------------------------------------------------");
-			//System.out.println("New sentence: " + s);
+				
+			}			
 						
 			Iterator<String> itAdj = adjectives.iterator();
 			Iterator<String> itNoun = nouns.iterator();
@@ -104,13 +110,16 @@ public class Reason {
 					result.put(resultString, 1);
 				}				
 			}
-		}		
+		}
+		result = obj.removeWords(result);
+		result = obj.sortByValues(result);
 		return result;
 	}
 	
 	
 	public HashMap<String, Integer> getReason(String text)	
 	{
+		Reason obj = new Reason();
 		String path = "C:/Users/Pranav/Downloads/stanford-postagger-2015-04-20/stanford-postagger-2015-04-20/models/english-left3words-distsim.tagger";
 		text = text.toLowerCase();
 		text = text.replaceAll("[^a-zA-Z']", " ");
@@ -136,16 +145,7 @@ public class Reason {
 					split[i+1] = split[i+1].replace("_NN", "");
 				
 					String reason = split[i] + " " + split[i+1];
-					if(result.containsKey(reason))
-					{
-						int value = result.get(reason);
-						value++;
-						result.put(reason, value);
-					}
-					else
-					{
-						result.put(reason, 1);
-					}
+					result = obj.add(result, reason);
 				}				
 			}
 		}		
@@ -168,52 +168,6 @@ public class Reason {
 		}		
 		
 		return result;
-	}
-	
-	
-	public HashMap<String, Integer> tag(String text)
-	{
-		Reason p = new Reason();
-		String path = "C:/Users/Pranav/Downloads/stanford-postagger-2015-04-20/stanford-postagger-2015-04-20/models/english-left3words-distsim.tagger";
-		text = text.toLowerCase();
-		text = text.replaceAll("[^a-zA-Z']", " ");
-		
-		MaxentTagger tagger = new MaxentTagger(path);	
-		String tagged = tagger.tagString(text);
-		
-		String[] split = tagged.split(" ");
-		HashMap<String, Integer> noun = new HashMap<>();
-		
-		for(String s : split)
-		{
-			if(s.contains("_NNPS"))
-			{
-				s = s.replace("_NNPS", "");
-				noun = p.add(noun, s);
-				//System.out.println(s);
-			}
-			else if(s.contains("_NNP"))
-			{
-				s = s.replace("_NNP", "");
-				noun = p.add(noun, s);
-				//System.out.println(s);
-			}
-			else if(s.contains("_NNS"))
-			{
-				s = s.replace("_NNS", "");
-				noun = p.add(noun, s);
-				//System.out.println(s);
-			}
-			else if(s.contains("_NN"))
-			{
-				s = s.replace("_NN", "");
-				noun = p.add(noun, s);
-				//System.out.println(s);
-			}		
-		}
-		noun = p.sortByValues(noun);
-		tagger = null;
-		return noun;
 	}
 	
 	
@@ -260,37 +214,33 @@ public class Reason {
 	}
 	
 	
-	public ArrayList<String> getNouns(HashMap<String, Integer> noun)
+	public void readJSON(String filePath) throws IOException, ParseException
 	{
-		ArrayList<String> nounsList = new ArrayList<>();
-		int i = 0;
-		for(Map.Entry<String, Integer> entry : noun.entrySet())
+		FileReader fr = new FileReader(filePath);		
+		BufferedReader br = new BufferedReader(fr);
+		
+		String line = "";
+		while((line = br.readLine()) != null)
 		{
-			if(i == 3)
-			{
-				break;
-			}
-			String s = entry.getKey();
-			nounsList.add(s);
-			i++;
-		}		
-		return nounsList;
+			System.out.println(line);
+			JSONParser parser = new JSONParser();	
+			JSONObject jsonObject = (JSONObject) parser.parse(line);
+		
+			String businessId = (String) jsonObject.get("id");
+			String text = (String) jsonObject.get("text");
+		
+			System.out.println("ID: " + businessId);
+			System.out.println("Text: " + text);
+		}
+		br.close();
+		
 	}
 	
-	
-	public void writeToFile(JSONObject json) throws IOException
-	{			
-		System.out.println(json);
-		FileWriter fw = new FileWriter("E:\\json3.json", true);
-		BufferedWriter bw = new BufferedWriter(fw);		
-		bw.write(json.toJSONString());
-		bw.write("\n");
-		bw.close();
-	}
-	
-	public static void main(String[] args) throws IOException
+	public static void main(String[] args) throws IOException, ParseException
 	{		
-		Reason pos = new Reason();
+		Reason pos = new Reason();	
+		
+		pos.readJSON("C:/Users/Pranav/Desktop/test.json");
 		
 		HashMap<String, Integer> result = new HashMap<>();
 		String text = "Cold cheap beer. Great place. Good bar food. Good service. \n\nLooking for a great Pittsburgh style fish sandwich, this is the place to go. The breading is light, fish is more than plentiful and a good side of home cut fries. \n\nGood grilled chicken salads or steak.  Soup of day is homemade and lots of specials. Great place for lunch or bar snacks and beer.";
@@ -299,89 +249,10 @@ public class Reason {
 		//result = pos.getReason(text1);
 		
 		//Get the reasons
-		result = pos.getReasonSentence(text1);
+		result = pos.getReasonSentence(text1);		
 		
-		//Remove the words which do not help us
-		result = pos.removeWords(result);
-		
-		//Sort the results
-		result = pos.sortByValues(result);
 		
 		System.out.println(result);
-		
-//		MongoClient mongoClient = new MongoClient();
-//	    DB db = mongoClient.getDB("yelp");
-//	    DBCollection collections = db.getCollection("results");
-//	    DBCursor cursor = collections.find();
-//	    
-//	    
-//	    DBObject document = collections.findOne();
-//	    collections.remove(document);
-//	    System.out.println("deleted");
-//	    
-//	    int counter = 0;
-//	    
-//	    while(cursor.hasNext())
-//	    {
-//	    	counter++;
-//	    	//Read the review text from Mongo
-//	    	DBObject testobject = collections.findOne();
-//	    	String businessid= (String)testobject.get("business_id");
-//	    	BasicDBList categories = (BasicDBList) testobject.get("categories");
-//	    	BasicDBList reviews = (BasicDBList) testobject.get("reviews");
-//	    	BasicDBList tips = (BasicDBList) testobject.get("tips");	    	
-//	    	
-//	    	
-//	    	//Read list of categories from MongoDB
-//	    	String category = "";		
-//	    	ArrayList<String> categoryList = new ArrayList<>();		
-//	    	for (Object r : categories )
-//	    	{
-//	    		categoryList.add(r.toString());
-//	    	}
-//	    	
-//	    	//Read the reviews from MongoDB
-//	    	String review = "";
-//	    	for (Object r : reviews)
-//	    	{
-//	    		review += r.toString();
-//	    	}
-//	    	
-//	    	//Read the tips from MongoDB
-//	    	String tip = "";
-//	    	for (Object r : tips)
-//	    	{
-//	    		tip += r.toString();
-//	    	}
-//        
-//	    	String text = review + tip;
-//	    	
-//	    	ArrayList<String> nounsList = new ArrayList<>();		
-//	    	//Get the list of nouns with their count from the text
-//	    	HashMap<String, Integer> noun = new HashMap<>();		
-//	    	noun = pos.tag(text);
-//		
-//	    	//Get the top 3 nouns from the noun hashmap
-//	    	nounsList = pos.getNouns(noun);		
-//		
-//		
-//		
-//	    	//Insert the nouns for all the corresponding categories
-//	    	for(String c : categoryList)
-//	    	{
-//	    		JSONObject json = new JSONObject();
-//	    		json.put("category", c);
-//	    		json.put("nouns", nounsList);
-//	    		
-//			
-//	    		//Write the json object to a file
-//	    		pos.writeToFile(json);
-//	    		json.remove(category);
-//	    		json = null;
-//	    	}	    	
-//	    	System.out.println("Counter: " + counter);
-//	    	collections.remove(testobject);
-//	    }
 	}
 }
 
