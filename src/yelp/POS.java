@@ -184,45 +184,53 @@ public class POS {
 	    	
 	    	//Read the reviews from MongoDB
 	    	String review = "";
+	    	int reviewCounter = 0;
 	    	for (Object r : reviews)
 	    	{
 	    		review += r.toString();
+	    		reviewCounter++;
+	    	}
+	    	int c = 0;
+	    	if(reviewCounter > 100)
+	    	{
+	    		c++;
 	    	}
 	    	
 	    	//Read the tips from MongoDB
 	    	String tip = "";
-	    	for (Object r : tips)
-	    	{
-	    		tip += r.toString();
-	    	}
+	    	//for (Object r : tips)
+	    	//{
+	    		//tip += r.toString();
+	    	//}
         
-	    	String text = review + tip;
+	    	//String text = review + tip;
 	    	
-	    	ArrayList<String> nounsList = new ArrayList<>();		
+	    	//ArrayList<String> nounsList = new ArrayList<>();		
 	    	//Get the list of nouns with their count from the text
-	    	HashMap<String, Integer> noun = new HashMap<>();		
-	    	noun = pos.tag(text);
+	    	//HashMap<String, Integer> noun = new HashMap<>();		
+	    	//noun = pos.tag(text);
 		
 	    	//Get the top 3 nouns from the noun hashmap
-	    	nounsList = pos.getNouns(noun);		
+	    	//nounsList = pos.getNouns(noun);		
 		
 		
 		
 	    	//Insert the nouns for all the corresponding categories
-	    	for(String c : categoryList)
-	    	{
-	    		JSONObject json = new JSONObject();
-	    		json.put("category", c);
-	    		json.put("nouns", nounsList);
+	    	//for(String c : categoryList)
+	    	//{
+	    		//JSONObject json = new JSONObject();
+	    		//json.put("category", c);
+	    		//json.put("nouns", nounsList);
 	    		
 			
 	    		//Write the json object to a file
-	    		pos.writeToFile(json);
-	    		json.remove(category);
-	    		json = null;
-	    	}	    	
-	    	System.out.println("Counter: " + counter);
+	    		//pos.writeToFile(json);
+	    		//json.remove(category);
+	    		//json = null;
+	    	//}	    	
+	    	//System.out.println("Counter: " + counter);
 	    	collections.remove(testobject);
+	    	
 	    }
 	}
 }
