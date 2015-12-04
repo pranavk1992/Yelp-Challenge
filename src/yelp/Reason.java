@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.plaf.synth.SynthSplitPaneUI;
 
@@ -154,7 +155,7 @@ public class Reason {
 	
 	public HashMap<String, Integer> removeWords(HashMap<String, Integer> result)
 	{
-		String[] removeWords = {"place", "look", "job", "next", "other", "gas", "thing", "home"};		
+		String[] removeWords = {"place", "look", "job", "next", "other", "gas", "thing", "home", "pittsburgh"};		
 		
 		Iterator<String> it = result.keySet().iterator();
 		while(it.hasNext())
@@ -171,11 +172,12 @@ public class Reason {
 	}
 	
 	
-	private static HashMap sortByValues(HashMap noun) 
+	@SuppressWarnings("unchecked")
+	private static HashMap<String, Integer> sortByValues(HashMap<String, Integer> noun) 
 	{ 
-	       List list = new LinkedList(noun.entrySet());
+	       List<Object> list = new LinkedList<Object>(noun.entrySet());	       
 	       
-	       Collections.sort(list, new Comparator() 
+	       Collections.sort(list, new Comparator<Object>() 
 	       {
 	            public int compare(Object o1, Object o2) 
 	            {
@@ -221,38 +223,52 @@ public class Reason {
 		
 		String line = "";
 		while((line = br.readLine()) != null)
-		{
-			System.out.println(line);
+		{			
 			JSONParser parser = new JSONParser();	
 			JSONObject jsonObject = (JSONObject) parser.parse(line);
 		
 			String businessId = (String) jsonObject.get("id");
 			String text = (String) jsonObject.get("text");
 		
-			System.out.println("ID: " + businessId);
-			System.out.println("Text: " + text);
+			//Call the getReasonSentence here with text as the input parameter
+			
 		}
-		br.close();
-		
+		br.close();		
 	}
+	
+	
+	public void displayResult(HashMap<String, Integer> result)
+	{
+		int i=1;
+		System.out.println("Reasons for the sentiment:");
+		for(Map.Entry<String, Integer> entry : result.entrySet())
+		{
+			if(i == 6)
+			{
+				break;
+			}
+			String key = entry.getKey();
+			System.out.println(i + ": " + key);
+			i++;
+		}			
+	}
+	
 	
 	public static void main(String[] args) throws IOException, ParseException
 	{		
-		Reason pos = new Reason();	
+		Reason obj = new Reason();	
 		
-		pos.readJSON("C:/Users/Pranav/Desktop/test.json");
+		obj.readJSON("C:/Users/Pranav/Desktop/test.json");
 		
 		HashMap<String, Integer> result = new HashMap<>();
 		String text = "Cold cheap beer. Great place. Good bar food. Good service. \n\nLooking for a great Pittsburgh style fish sandwich, this is the place to go. The breading is light, fish is more than plentiful and a good side of home cut fries. \n\nGood grilled chicken salads or steak.  Soup of day is homemade and lots of specials. Great place for lunch or bar snacks and beer.";
 		String text1 = "Terrible service.  Food unremarkable.  Waiter disappeared for 45 minutes to serve larger group due to staffing mismanagement.  Saved his tip by discounting meal after I complained.  All and all, a very crude and unpleasant dining experience for me and my guests.  Not to be repeated, never again!";
 		
-		//result = pos.getReason(text1);
+		//result = obj.getReason(text1);
 		
 		//Get the reasons
-		result = pos.getReasonSentence(text1);		
-		
-		
-		System.out.println(result);
+		result = obj.getReasonSentence(text);
+		obj.displayResult(result);		
 	}
 }
 
