@@ -154,7 +154,7 @@ public class Reason {
 	
 	public HashMap<String, Integer> removeWords(HashMap<String, Integer> result)
 	{
-		String[] removeWords = {"place", "look", "job", "next", "other", "gas", "thing"};		
+		String[] removeWords = {"place", "look", "job", "next", "other", "gas", "thing", "home"};		
 		
 		Iterator<String> it = result.keySet().iterator();
 		while(it.hasNext())
