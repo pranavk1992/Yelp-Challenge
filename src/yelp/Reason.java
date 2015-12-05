@@ -155,7 +155,7 @@ public class Reason {
 	
 	public HashMap<String, Integer> removeWords(HashMap<String, Integer> result)
 	{
-		String[] removeWords = {"place", "look", "job", "next", "other", "gas", "thing", "home", "pittsburgh"};		
+		String[] removeWords = {"place", "look", "job", "next", "other", "gas", "thing", "home", "pittsburgh", "time", "only"};		
 		
 		Iterator<String> it = result.keySet().iterator();
 		while(it.hasNext())
@@ -218,6 +218,7 @@ public class Reason {
 	
 	public void readJSON(String filePath) throws IOException, ParseException
 	{
+		System.out.println("read json");
 		FileReader fr = new FileReader(filePath);		
 		BufferedReader br = new BufferedReader(fr);
 		
@@ -227,10 +228,11 @@ public class Reason {
 			JSONParser parser = new JSONParser();	
 			JSONObject jsonObject = (JSONObject) parser.parse(line);
 		
-			String businessId = (String) jsonObject.get("id");
-			String text = (String) jsonObject.get("text");
-		
-			//Call the getReasonSentence here with text as the input parameter
+			String businessId = (String) jsonObject.get("business_id");
+			//String reviews = (String) jsonObject.get("reviews");
+			System.out.println("businessID: " + businessId);
+			//System.out.println("reviews: " + reviews);
+			//Call the getReasonSentence here with review text as the input parameter
 			
 		}
 		br.close();		
@@ -258,17 +260,18 @@ public class Reason {
 	{		
 		Reason obj = new Reason();	
 		
-		obj.readJSON("C:/Users/Pranav/Desktop/test.json");
+		//obj.readJSON("C:/Users/Pranav/Desktop/test.json");
 		
 		HashMap<String, Integer> result = new HashMap<>();
 		String text = "Cold cheap beer. Great place. Good bar food. Good service. \n\nLooking for a great Pittsburgh style fish sandwich, this is the place to go. The breading is light, fish is more than plentiful and a good side of home cut fries. \n\nGood grilled chicken salads or steak.  Soup of day is homemade and lots of specials. Great place for lunch or bar snacks and beer.";
-		String text1 = "Terrible service.  Food unremarkable.  Waiter disappeared for 45 minutes to serve larger group due to staffing mismanagement.  Saved his tip by discounting meal after I complained.  All and all, a very crude and unpleasant dining experience for me and my guests.  Not to be repeated, never again!";
+		String text1 = "I went to Vegas recently for a mini-getaway, and being the crazy ramen aficionados that we are, my boyfriend and I HAD to come here and try this place during our trip.\n\nWe both ordered the Tonkotsu-Shoyu ramen with extra chashu and hard-boiled (more like deliciously and perfectly soft-boiled!) egg.  The broth was absolutely delicious--just the right amount of flavor and rich pork fatty goodness to make it taste perfect!  Even though it was 103 degrees outside, I didn't care.  I ate and drank the entire bowl clean.  Gluttony at its finest.  Woo!  I was extremely impressed with the quality and texture of their chashu.  It was marinated just right and they really did cook it for hours to get it to really melt in my mouth!  The moment I bit into a piece, I didn't even really have to chew at all...it immediately disintegrated into orgasmic morsels of ecstasy and rocked a party in my mouth!  The egg was perfection...just the way all ramen \"hard-boiled\" (I still think they should call them \"soft-boiled\"...it just suits the texture better!) eggs should be.  The yolk was nice and and gooey and soft.  It complimented the ramen broth so well!  Needless to say, I wolfed down the entire bowl in about 10 minutes or less. hehe ^_^  \n\nWe also got an order of the regular fried rice, and the only thing I can say is that it is THE BEST Japanese fried rice I have EVER had in my life thus far (in the States).  The rice was so extremely flavorful and light (because too much oil is a no-no).  Sprinkled with those little slices of heaven known as their chashu and plenty of pickled ginger, it tasted PHENOMENAL.  That was the 2nd party that rocked my mouth in one sitting!  Boy, what an awesomely dining experience!\n\nExquisite ramen.  Good price.  Great service.  Will most DEFINITELY have to visit again whenever we're in the area.\n\nOh, and my brother (who doesn't eat pork) also came with us.  He ordered the kimchi (or spicy?) fried rice without the pork and REALLY enjoyed his food.  He was even full off just that one single plate, so their portions are very reasonable, considering the elephant-sized appetite that he has.";
 		
 		//result = obj.getReason(text1);
 		
 		//Get the reasons
-		result = obj.getReasonSentence(text);
-		obj.displayResult(result);		
+		result = obj.getReasonSentence(text1);
+		obj.displayResult(result);	
+		
 	}
 }
 
