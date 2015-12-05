@@ -40,6 +40,8 @@ public class ArffFileCreator {
 						word = word.replace("'", "\\'");
 						word = "\'" + word + "\'";
 					}
+					else
+						word = "\'" + word + "\'";
 					if (!wordStatus.containsKey(word) && word.length() > 1) {
 						wordStatus.put(word, 0);
 					}
@@ -50,11 +52,11 @@ public class ArffFileCreator {
 		System.out.println(wordStatus.size());
 
 		// Writing relation name in both arff files
-		arffWriter.write("@RELATION review&tips\n\n");
+		arffWriter.write("@relation reviewtips\n\n");
 
 		// Writing attributes in both arff files
 		for (String att : wordStatus.keySet()) {
-			arffWriter.write("@ATTRIBUTE " + att + " {0,1}\n");
+			arffWriter.write("@attribute " + att + " {0,1}\n");
 		}
 		
 		BufferedReader br2 = new BufferedReader(new FileReader(f));
@@ -85,8 +87,8 @@ public class ArffFileCreator {
 		
 		categoryType += categoryType.substring(0, categoryType.lastIndexOf(","))+"}";
 		
-		arffWriter.write("@ATTRIBUTE category "+categoryType+"\n");
-		arffWriter.write("\n@DATA\n\n");	
+		arffWriter.write("@attribute 'category' "+categoryType+"\n");
+		arffWriter.write("\n@data\n");	
 
 		System.out.println("Populating hashmap and creating file...");
 		
