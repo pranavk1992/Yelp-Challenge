@@ -250,13 +250,13 @@ public class Reason {
 			JSONObject jsonObject = (JSONObject) parser.parse(line);
 		
 			String businessId = (String) jsonObject.get("business_id");
-			String reviews = (String) jsonObject.get("reviews");
+			String reviews = (String) jsonObject.get("reviews");			
 			
-			result = obj.getReasonSentence(reviews);
-			System.out.println("Business: " + businessId);
-			obj.displayResult(result);
+			result = obj.getReasonSentence(reviews);			
+			obj.displayResult(result, businessId);			
 		}
-	}
+	}	
+	
 	
 	
 	public void createJSON(String filePath) throws IOException, ParseException
@@ -295,25 +295,26 @@ public class Reason {
 			JSONObject json = new JSONObject();
 			json.put("business_id", key);
 			json.put("reviews", value);
-			obj.writeToFile(json);					
+			obj.writeToFile(json, "E:\\positive.json");					
 		}
 		br.close();		
 	}
 	
 	
-	public void writeToFile(JSONObject json) throws IOException
-	{			
-		System.out.println(json);
-		FileWriter fw = new FileWriter("E:\\positive.json", true);
+	public void writeToFile(JSONObject json, String filePath) throws IOException
+	{		
+		FileWriter fw = new FileWriter(filePath, true);
 		BufferedWriter bw = new BufferedWriter(fw);		
 		bw.write(json.toJSONString());
 		bw.write("\n");
 		bw.close();
 	}
 	
-	public void displayResult(HashMap<String, Integer> result)
+	public void displayResult(HashMap<String, Integer> result, String businessId)
 	{
+		
 		int i=1;
+		System.out.println("Business: " + businessId);
 		System.out.println("Reasons for the sentiment:");
 		for(Map.Entry<String, Integer> entry : result.entrySet())
 		{
@@ -334,9 +335,9 @@ public class Reason {
 		
 		//obj.createJSON("C:/Users/Pranav/Downloads/verypositive");
 		obj.readJSON("E:\\positive.json");
-		HashMap<String, Integer> result = new HashMap<>();
-		String text = "Cold cheap beer. Great place. Good bar food. Good service. \n\nLooking for a great Pittsburgh style fish sandwich, this is the place to go. The breading is light, fish is more than plentiful and a good side of home cut fries. \n\nGood grilled chicken salads or steak.  Soup of day is homemade and lots of specials. Great place for lunch or bar snacks and beer.";
-		String text1 = "These are some great cheesesteaks. I have come here multiplier times and have never left unhappy. The staff are nice and the food is delicious.  Also try the 'Cheesesteak Fries' they are freakin amazing! I am glad I work next to this place, always a great lunch";
+		//HashMap<String, Integer> result = new HashMap<>();
+		//String text = "Cold cheap beer. Great place. Good bar food. Good service. \n\nLooking for a great Pittsburgh style fish sandwich, this is the place to go. The breading is light, fish is more than plentiful and a good side of home cut fries. \n\nGood grilled chicken salads or steak.  Soup of day is homemade and lots of specials. Great place for lunch or bar snacks and beer.";
+		//String text1 = "These are some great cheesesteaks. I have come here multiplier times and have never left unhappy. The staff are nice and the food is delicious.  Also try the 'Cheesesteak Fries' they are freakin amazing! I am glad I work next to this place, always a great lunch";
 		
 		//result = obj.getReason(text1);
 		
