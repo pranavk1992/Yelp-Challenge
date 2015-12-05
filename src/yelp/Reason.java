@@ -28,6 +28,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.util.Hash;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -37,6 +38,7 @@ import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.ling.Sentence;
 import edu.stanford.nlp.process.DocumentPreprocessor;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
+import edu.stanford.nlp.util.ArrayUtils;
 
 
 
@@ -153,20 +155,37 @@ public class Reason {
 		return result;
 	}
 	
-	public HashMap<String, Integer> removeWords(HashMap<String, Integer> result)
+	public HashMap<String, Integer> removeWords(HashMap<String, Integer> result) throws IllegalStateException
 	{
-		String[] removeWords = {"place", "look", "job", "next", "other", "gas", "thing", "home", "pittsburgh", "time", "only"};		
+		String[] removeWords1 = {"place", "look", "home", "time", "only", "customer", "guest", "mom", "dad", "job", "next", "other", "gas", "thing", "similar", "bus", "anybody", "lot", "way", "addition", "omg"};		
+		String[] removeWords2 = {"pittsburgh", "charlotte", "urbana-champaign", "phoenix", "vegas", "madison", "montreal", "waterloo", "karlsruhe", "edinburgh"};
 		
+		List<String> keyList = new ArrayList<>();
 		Iterator<String> it = result.keySet().iterator();
+		
 		while(it.hasNext())
 		{
 			String key = it.next();
-			for(int i=0; i<removeWords.length; i++)
-				if(key.contains(removeWords[i]))
+			for(int i=0; i<removeWords1.length; i++)
+			{
+				if(key.contains(removeWords1[i]))
+				{				
+					keyList.add(key);					
+				}				
+			}
+			for(int j=0; j<removeWords2.length; j++)
+			{
+				if(key.contains(removeWords2[j]))
 				{
-					it.remove();
+					keyList.add(key);
 				}
-		}		
+			}
+		}
+		
+		for(String s : keyList)
+		{
+			result.remove(s);
+		}
 		
 		return result;
 	}
@@ -218,9 +237,11 @@ public class Reason {
 	
 	public void readJSON(String filePath) throws IOException, ParseException
 	{
-		System.out.println("read json");
+		Reason obj = new Reason();
+		HashMap<String, Integer> result = new HashMap<>();
 		FileReader fr = new FileReader(filePath);		
 		BufferedReader br = new BufferedReader(fr);
+		HashMap<String, String> map = new HashMap();
 		
 		String line = "";
 		while((line = br.readLine()) != null)
@@ -229,15 +250,66 @@ public class Reason {
 			JSONObject jsonObject = (JSONObject) parser.parse(line);
 		
 			String businessId = (String) jsonObject.get("business_id");
-			//String reviews = (String) jsonObject.get("reviews");
-			System.out.println("businessID: " + businessId);
-			//System.out.println("reviews: " + reviews);
-			//Call the getReasonSentence here with review text as the input parameter
+			String reviews = (String) jsonObject.get("reviews");
 			
+			result = obj.getReasonSentence(reviews);
+			System.out.println("Business: " + businessId);
+			obj.displayResult(result);
+		}
+	}
+	
+	
+	public void createJSON(String filePath) throws IOException, ParseException
+	{
+		Reason obj = new Reason();
+		
+		FileReader fr = new FileReader(filePath);		
+		BufferedReader br = new BufferedReader(fr);
+		HashMap<String, String> map = new HashMap();
+		
+		String line = "";
+		while((line = br.readLine()) != null)
+		{			
+			JSONParser parser = new JSONParser();	
+			JSONObject jsonObject = (JSONObject) parser.parse(line);
+		
+			String businessId = (String) jsonObject.get("business_id");
+			String reviews = (String) jsonObject.get("reviews");			
+			
+			if(map.containsKey(businessId))
+			{
+				String reviewText = map.get(businessId);
+				reviewText += reviews;
+				map.put(businessId, reviewText);
+			}
+			else
+			{
+				map.put(businessId, reviews);
+			}
+						
+		}
+		for(Map.Entry<String, String> entry: map.entrySet())
+		{
+			String key = entry.getKey();			
+			String value = entry.getValue();
+			JSONObject json = new JSONObject();
+			json.put("business_id", key);
+			json.put("reviews", value);
+			obj.writeToFile(json);					
 		}
 		br.close();		
 	}
 	
+	
+	public void writeToFile(JSONObject json) throws IOException
+	{			
+		System.out.println(json);
+		FileWriter fw = new FileWriter("E:\\positive.json", true);
+		BufferedWriter bw = new BufferedWriter(fw);		
+		bw.write(json.toJSONString());
+		bw.write("\n");
+		bw.close();
+	}
 	
 	public void displayResult(HashMap<String, Integer> result)
 	{
@@ -260,17 +332,17 @@ public class Reason {
 	{		
 		Reason obj = new Reason();	
 		
-		//obj.readJSON("C:/Users/Pranav/Desktop/test.json");
-		
+		//obj.createJSON("C:/Users/Pranav/Downloads/verypositive");
+		obj.readJSON("E:\\positive.json");
 		HashMap<String, Integer> result = new HashMap<>();
 		String text = "Cold cheap beer. Great place. Good bar food. Good service. \n\nLooking for a great Pittsburgh style fish sandwich, this is the place to go. The breading is light, fish is more than plentiful and a good side of home cut fries. \n\nGood grilled chicken salads or steak.  Soup of day is homemade and lots of specials. Great place for lunch or bar snacks and beer.";
-		String text1 = "I went to Vegas recently for a mini-getaway, and being the crazy ramen aficionados that we are, my boyfriend and I HAD to come here and try this place during our trip.\n\nWe both ordered the Tonkotsu-Shoyu ramen with extra chashu and hard-boiled (more like deliciously and perfectly soft-boiled!) egg.  The broth was absolutely delicious--just the right amount of flavor and rich pork fatty goodness to make it taste perfect!  Even though it was 103 degrees outside, I didn't care.  I ate and drank the entire bowl clean.  Gluttony at its finest.  Woo!  I was extremely impressed with the quality and texture of their chashu.  It was marinated just right and they really did cook it for hours to get it to really melt in my mouth!  The moment I bit into a piece, I didn't even really have to chew at all...it immediately disintegrated into orgasmic morsels of ecstasy and rocked a party in my mouth!  The egg was perfection...just the way all ramen \"hard-boiled\" (I still think they should call them \"soft-boiled\"...it just suits the texture better!) eggs should be.  The yolk was nice and and gooey and soft.  It complimented the ramen broth so well!  Needless to say, I wolfed down the entire bowl in about 10 minutes or less. hehe ^_^  \n\nWe also got an order of the regular fried rice, and the only thing I can say is that it is THE BEST Japanese fried rice I have EVER had in my life thus far (in the States).  The rice was so extremely flavorful and light (because too much oil is a no-no).  Sprinkled with those little slices of heaven known as their chashu and plenty of pickled ginger, it tasted PHENOMENAL.  That was the 2nd party that rocked my mouth in one sitting!  Boy, what an awesomely dining experience!\n\nExquisite ramen.  Good price.  Great service.  Will most DEFINITELY have to visit again whenever we're in the area.\n\nOh, and my brother (who doesn't eat pork) also came with us.  He ordered the kimchi (or spicy?) fried rice without the pork and REALLY enjoyed his food.  He was even full off just that one single plate, so their portions are very reasonable, considering the elephant-sized appetite that he has.";
+		String text1 = "These are some great cheesesteaks. I have come here multiplier times and have never left unhappy. The staff are nice and the food is delicious.  Also try the 'Cheesesteak Fries' they are freakin amazing! I am glad I work next to this place, always a great lunch";
 		
 		//result = obj.getReason(text1);
 		
 		//Get the reasons
-		result = obj.getReasonSentence(text1);
-		obj.displayResult(result);	
+		//result = obj.getReasonSentence(text1);
+		//obj.displayResult(result);	
 		
 	}
 }
