@@ -310,9 +310,11 @@ public class Reason {
 		bw.close();
 	}
 	
-	public void displayResult(HashMap<String, Integer> result, String businessId)
+	public void displayResult(HashMap<String, Integer> result, String businessId) throws IOException
 	{
-		
+		Reason obj = new Reason();
+		JSONObject json = new JSONObject();
+		List<String> reasons = new ArrayList();
 		int i=1;
 		System.out.println("Business: " + businessId);
 		System.out.println("Reasons for the sentiment:");
@@ -324,8 +326,13 @@ public class Reason {
 			}
 			String key = entry.getKey();
 			System.out.println(i + ": " + key);
+			reasons.add(key);
 			i++;
-		}			
+		}
+		json.put("Business_Id", businessId);
+		json.put("Reasons", reasons);
+		obj.writeToFile(json, "C:\\Users\\Pranav\\Desktop\\finalResult.json");
+		
 	}
 	
 	
