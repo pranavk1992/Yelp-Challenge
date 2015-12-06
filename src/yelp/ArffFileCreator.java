@@ -82,7 +82,7 @@ public class ArffFileCreator {
 
 		data = new Instances("TipsReviewsCategories", attributes, 0);
 
-		System.out.println("Populating hashmap and creating file...");
+		System.out.println("Populating hashmap and creating file....");
 
 		BufferedReader br3 = new BufferedReader(new FileReader(f));
 
