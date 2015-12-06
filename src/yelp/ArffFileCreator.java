@@ -97,7 +97,7 @@ public class ArffFileCreator {
 			if (counter % 500 == 0)
 				System.out.println(counter + " data rows written");
 
-			if (counter == 20000) {
+			if (counter == 1000) {
 				arffWriter.write(data.toString());
 				arffWriter.close();
 //				IncrementalClassifier.classify(data);
