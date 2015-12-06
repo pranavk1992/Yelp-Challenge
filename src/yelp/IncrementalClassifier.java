@@ -1,16 +1,15 @@
 package yelp;
 
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.core.converters.ArffLoader;
-import weka.classifiers.Evaluation;
-import weka.classifiers.bayes.NaiveBayesUpdateable;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Random;
+
+import weka.classifiers.Evaluation;
+import weka.classifiers.bayes.NaiveBayesUpdateable;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.converters.ArffLoader;
 
 /**
  * This example trains NaiveBayes incrementally on data obtained from the
