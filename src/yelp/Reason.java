@@ -44,7 +44,9 @@ import edu.stanford.nlp.util.ArrayUtils;
 
 public class Reason {
 	
-	
+	//This function returns the reasons without using bigrams.
+	//The return HashMap contains the reason phrase and the number of times it was found.
+	//The result HashMap is sorted in descending and can be iterated over to get the top 'n' phrases. 
 	public HashMap<String, Integer> getReasonSentence(String text)
 	{	
 		Reason obj = new Reason();
@@ -151,7 +153,10 @@ public class Reason {
 					result = obj.add(result, reason);
 				}				
 			}
-		}		
+		}
+		
+		result = obj.removeWords(result);
+		result = obj.sortByValues(result);
 		return result;
 	}
 	
@@ -192,7 +197,7 @@ public class Reason {
 	
 	
 	@SuppressWarnings("unchecked")
-	private static HashMap<String, Integer> sortByValues(HashMap<String, Integer> noun) 
+	public HashMap<String, Integer> sortByValues(HashMap<String, Integer> noun) 
 	{ 
 	       List<Object> list = new LinkedList<Object>(noun.entrySet());	       
 	       
@@ -252,7 +257,7 @@ public class Reason {
 			String businessId = (String) jsonObject.get("business_id");
 			String reviews = (String) jsonObject.get("reviews");			
 			
-			result = obj.getReasonSentence(reviews);			
+			result = obj.getReason(reviews);			
 			obj.displayResult(result, businessId);			
 		}
 	}	
@@ -295,7 +300,7 @@ public class Reason {
 			JSONObject json = new JSONObject();
 			json.put("business_id", key);
 			json.put("reviews", value);
-			obj.writeToFile(json, "E:\\positive.json");					
+			obj.writeToFile(json, "E:\\negative.json");					
 		}
 		br.close();		
 	}
@@ -331,7 +336,7 @@ public class Reason {
 		}
 		json.put("Business_Id", businessId);
 		json.put("Reasons", reasons);
-		obj.writeToFile(json, "C:\\Users\\Pranav\\Desktop\\finalResult.json");
+		obj.writeToFile(json, "C:\\Users\\Pranav\\Desktop\\finalResult5.json");
 		
 	}
 	
@@ -340,17 +345,17 @@ public class Reason {
 	{		
 		Reason obj = new Reason();	
 		
-		//obj.createJSON("C:/Users/Pranav/Downloads/verypositive");
+		//obj.createJSON("C:/Users/Pranav/Downloads/verynegative");
 		obj.readJSON("E:\\positive.json");
-		//HashMap<String, Integer> result = new HashMap<>();
-		//String text = "Cold cheap beer. Great place. Good bar food. Good service. \n\nLooking for a great Pittsburgh style fish sandwich, this is the place to go. The breading is light, fish is more than plentiful and a good side of home cut fries. \n\nGood grilled chicken salads or steak.  Soup of day is homemade and lots of specials. Great place for lunch or bar snacks and beer.";
-		//String text1 = "These are some great cheesesteaks. I have come here multiplier times and have never left unhappy. The staff are nice and the food is delicious.  Also try the 'Cheesesteak Fries' they are freakin amazing! I am glad I work next to this place, always a great lunch";
+		HashMap<String, Integer> result = new HashMap<>();
+		String text = "Cold cheap beer. Great place. Good bar food. Good service. \n\nLooking for a great Pittsburgh style fish sandwich, this is the place to go. The breading is light, fish is more than plentiful and a good side of home cut fries. \n\nGood grilled chicken salads or steak.  Soup of day is homemade and lots of specials. Great place for lunch or bar snacks and beer.";
+		String text1 = "They confuse SALT with SAUCE, they give you the wrong orders, the food is very mediocre, greasy, just like the staff's customer service.";
 		
 		//result = obj.getReason(text1);
 		
 		//Get the reasons
-		//result = obj.getReasonSentence(text1);
-		//obj.displayResult(result);	
+		result = obj.getReason(text1);
+		obj.displayResult(result, "");	
 		
 	}
 }
