@@ -13,17 +13,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.plaf.synth.SynthSplitPaneUI;
+import org.json.simple.JSONObject;
 
 import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
-
-import org.json.simple.JSONObject;
 
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
 
