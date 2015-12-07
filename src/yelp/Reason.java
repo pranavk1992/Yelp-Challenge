@@ -346,7 +346,7 @@ public class Reason {
 		Reason obj = new Reason();	
 		
 		//obj.createJSON("C:/Users/Pranav/Downloads/verynegative");
-		obj.readJSON("E:\\positive.json");
+		obj.readJSON("E:\\negative.json");
 		HashMap<String, Integer> result = new HashMap<>();
 		String text = "Cold cheap beer. Great place. Good bar food. Good service. \n\nLooking for a great Pittsburgh style fish sandwich, this is the place to go. The breading is light, fish is more than plentiful and a good side of home cut fries. \n\nGood grilled chicken salads or steak.  Soup of day is homemade and lots of specials. Great place for lunch or bar snacks and beer.";
 		String text1 = "They confuse SALT with SAUCE, they give you the wrong orders, the food is very mediocre, greasy, just like the staff's customer service.";
