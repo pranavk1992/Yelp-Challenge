@@ -35,7 +35,7 @@ public class ArffFileCreator {
 		HashMap<String, Integer> reviewCount = new HashMap<String, Integer>();
 		String[] words = new String[3];
 		String word, sub, sub1, category;
-		int readCounter = 0, categoryCount = 0, writeCounter = 0, allin = 1;
+		int readCounter = 0, categoryCount = 0, writeCounter = 0, allin = 1, instanceCounter = 0;
 
 		attributes = new FastVector();
 		attributeType = new FastVector();
@@ -236,8 +236,10 @@ public class ArffFileCreator {
 										.indexOf("1");
 						}
 						vals[vals.length - 1] = categoryMap.get(category) - 1;
-						if (allin == 1)
+						if (allin == 1) {
+							instanceCounter++;
 							data.add(new Instance(1.0, vals));
+						}							
 						else
 							allin = 1;
 					}
@@ -246,6 +248,8 @@ public class ArffFileCreator {
 				}
 			}
 		}
+		System.out.println(instanceCounter+" instances recorded!!");
+		
 		arffWriter.write(data.toString());		
 		br3.close();
 	}
