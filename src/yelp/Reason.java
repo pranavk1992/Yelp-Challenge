@@ -2,7 +2,6 @@ package yelp;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,18 +16,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.swing.plaf.synth.SynthSplitPaneUI;
-
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
-import com.mongodb.util.Hash;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -38,7 +25,6 @@ import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.ling.Sentence;
 import edu.stanford.nlp.process.DocumentPreprocessor;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
-import edu.stanford.nlp.util.ArrayUtils;
 
 
 
@@ -51,7 +37,7 @@ public class Reason {
 	{	
 		Reason obj = new Reason();
 		//Local tagger downloaded from the Stanford POS tagger
-		String path = "C:/Users/Pranav/Downloads/stanford-postagger-2015-04-20/stanford-postagger-2015-04-20/models/english-left3words-distsim.tagger";
+		String path = Constants.TAGGER_FILE_PATH;
 		text = text.toLowerCase();
 		MaxentTagger tagger = new MaxentTagger(path);
 		
@@ -132,7 +118,7 @@ public class Reason {
 	public HashMap<String, Integer> getReason(String text)	
 	{
 		Reason obj = new Reason();
-		String path = "C:/Users/Pranav/Downloads/stanford-postagger-2015-04-20/stanford-postagger-2015-04-20/models/english-left3words-distsim.tagger";
+		String path = Constants.TAGGER_FILE_PATH;
 		text = text.toLowerCase();
 		text = text.replaceAll("[^a-zA-Z']", " ");
 		HashMap<String, Integer> result = new HashMap<>();
@@ -326,7 +312,7 @@ public class Reason {
 			JSONObject json = new JSONObject();
 			json.put("business_id", key);
 			json.put("reviews", value);
-			obj.writeToFile(json, "E:\\negative.json");					
+			obj.writeToFile(json, Constants.REASON_FILE_PATH);					
 		}
 		br.close();		
 	}
@@ -372,17 +358,17 @@ public class Reason {
 		json.put("Reasons", reasons);
 		
 		//Write the results into a local file
-		obj.writeToFile(json, "C:\\Users\\Pranav\\Desktop\\finalResult5.json");
+		obj.writeToFile(json, Constants.REASON_OUTPUT_FILE_PATH);
 		
 	}
 	
 	
-	public static void main(String[] args) throws IOException, ParseException
+	public void reason() throws IOException, ParseException
 	{		
 		Reason obj = new Reason();	
 		
-		//obj.createJSON("C:/Users/Pranav/Downloads/verynegative");
-		obj.readJSON("E:\\negative.json");
+		obj.createJSON(Constants.SENTIMENT_FILE_PATH);
+		obj.readJSON(Constants.REASON_FILE_PATH);
 		HashMap<String, Integer> result = new HashMap<>();
 		String text = "Cold cheap beer. Great place. Good bar food. Good service. \n\nLooking for a great Pittsburgh style fish sandwich, this is the place to go. The breading is light, fish is more than plentiful and a good side of home cut fries. \n\nGood grilled chicken salads or steak.  Soup of day is homemade and lots of specials. Great place for lunch or bar snacks and beer.";
 		String text1 = "They confuse SALT with SAUCE, they give you the wrong orders, the food is very mediocre, greasy, just like the staff's customer service.";
