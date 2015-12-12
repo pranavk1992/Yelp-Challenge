@@ -4,5 +4,5 @@
 
 The project comprised of 2 tasks:
 
-* Task 1: Categorize business based on text from reviews and tips.
-* Task 2: Extract sentiment from reviews and tips for each business and find out the reason for the sentiment.
+* Task 1: *Categorize* business based on text from reviews and tips.
+* Task 2: *Extract sentiment* from reviews and tips for each business and find out the reason for the sentiment.
