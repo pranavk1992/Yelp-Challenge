@@ -11,7 +11,7 @@ public class Main {
 		
 		System.out.println("/nCreating POS JSON file...");
 		POSJSONCreator pjc = new POSJSONCreator();
-		pjc.jsonCreaor();
+		pjc.jsonCreator();
 		
 		System.out.println("/nCreating ARFF file...");
 		ArffFileCreator afc = new ArffFileCreator();
