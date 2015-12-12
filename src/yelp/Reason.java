@@ -44,27 +44,30 @@ import edu.stanford.nlp.util.ArrayUtils;
 
 public class Reason {
 	
-	
+	//This function returns the reasons without using bigrams
+	//The return HashMap contains the reason phrase and the number of times it was found
+	//The result HashMap is sorted in descending and can be iterated over to get the top 'n' phrases 
 	public HashMap<String, Integer> getReasonSentence(String text)
 	{	
 		Reason obj = new Reason();
-		
+		//Local tagger downloaded from the Stanford POS tagger
 		String path = "C:/Users/Pranav/Downloads/stanford-postagger-2015-04-20/stanford-postagger-2015-04-20/models/english-left3words-distsim.tagger";
 		text = text.toLowerCase();
 		MaxentTagger tagger = new MaxentTagger(path);
-		//text = text.replaceAll("[^a-zA-Z']", " ");
+		
 		Reader reader = new StringReader(text);
 		DocumentPreprocessor dp = new DocumentPreprocessor(reader);
 		List<String> sentenceList = new ArrayList<String>();
 		HashMap<String, Integer> result = new HashMap<>(); 
 		
+		//Parse the review sentence by sentence
 		for(List<HasWord> sentence : dp)
 		{
 			String senteceString = Sentence.listToString(sentence);
 			sentenceList.add(senteceString.toString());
 		}
 		
-		
+		//Create a list of nouns and nouns of adjectives
 		for(String s : sentenceList)
 		{
 			List<String> adjectives = new ArrayList<>();
@@ -76,6 +79,7 @@ public class Reason {
 			
 			for(int i=0; i<split.length; i++)
 			{
+				//Check for adjectives and add it to the adjective list
 				if(split[i].contains("_JJ"))
 				{
 					split[i] = split[i].replace("_JJR", "");					
@@ -85,18 +89,19 @@ public class Reason {
 				}
 				if(split[i].contains("_NN"))
 				{
+					//Check for nouns and add it to the noun list
 					split[i] = split[i].replace("_NNPS", "");
 					split[i] = split[i].replace("_NNS", "");
 					split[i] = split[i].replace("_NNP", "");
 					split[i] = split[i].replace("_NN", "");
 					nouns.add(split[i]);					
-				}
-				
+				}			
 			}			
-						
+					
 			Iterator<String> itAdj = adjectives.iterator();
 			Iterator<String> itNoun = nouns.iterator();
 			
+			//Try to get the noun adjective pairs
 			while(itAdj.hasNext() && itNoun.hasNext())
 			{
 				String adj = itAdj.next();
@@ -120,6 +125,10 @@ public class Reason {
 	}
 	
 	
+	
+	
+	//Get the reason using bigrams
+	//Parse the sentence using bigrams and try to find the noun adjective pairs
 	public HashMap<String, Integer> getReason(String text)	
 	{
 		Reason obj = new Reason();
@@ -151,10 +160,19 @@ public class Reason {
 					result = obj.add(result, reason);
 				}				
 			}
-		}		
+		}
+		
+		result = obj.removeWords(result);
+		result = obj.sortByValues(result);
 		return result;
 	}
 	
+	
+	/*
+	There are some words which do not help identify the reasons
+	This function removes the results from the final result hashmap if it contains any of these words
+	Returns the hashmap after removing the required entries
+	 */
 	public HashMap<String, Integer> removeWords(HashMap<String, Integer> result) throws IllegalStateException
 	{
 		String[] removeWords1 = {"place", "look", "home", "time", "only", "customer", "guest", "mom", "dad", "job", "next", "other", "gas", "thing", "similar", "bus", "anybody", "lot", "way", "addition", "omg"};		
@@ -191,8 +209,11 @@ public class Reason {
 	}
 	
 	
+	/*
+	 Sorts the hashmap on values and returns the sorted hashmap
+	 */
 	@SuppressWarnings("unchecked")
-	private static HashMap<String, Integer> sortByValues(HashMap<String, Integer> noun) 
+	public HashMap<String, Integer> sortByValues(HashMap<String, Integer> noun) 
 	{ 
 	       List<Object> list = new LinkedList<Object>(noun.entrySet());	       
 	       
@@ -218,6 +239,12 @@ public class Reason {
 	  }
 	
 		
+	/*
+	This function is used to add the nouns to the hashmap
+	The input is the string (noun) and the hashmap itself
+	The function checks for existing nouns in the hashmap and adds it or increments the counter
+	After adding the noun, the hashmap is returned
+	 */	
 	public HashMap<String, Integer> add(HashMap<String, Integer> noun, String s)
 	{
 		if(noun.containsKey(s))
@@ -235,6 +262,8 @@ public class Reason {
 	}
 	
 	
+	//Read the json file to get the text
+	//Use this text to call the get reason function
 	public void readJSON(String filePath) throws IOException, ParseException
 	{
 		Reason obj = new Reason();
@@ -252,13 +281,15 @@ public class Reason {
 			String businessId = (String) jsonObject.get("business_id");
 			String reviews = (String) jsonObject.get("reviews");			
 			
-			result = obj.getReasonSentence(reviews);			
+			result = obj.getReason(reviews);			
 			obj.displayResult(result, businessId);			
 		}
 	}	
 	
 	
-	
+	/*
+	 Temporary function to create the json file in a different format for further parsing
+	 */
 	public void createJSON(String filePath) throws IOException, ParseException
 	{
 		Reason obj = new Reason();
@@ -295,12 +326,16 @@ public class Reason {
 			JSONObject json = new JSONObject();
 			json.put("business_id", key);
 			json.put("reviews", value);
-			obj.writeToFile(json, "E:\\positive.json");					
+			obj.writeToFile(json, "E:\\negative.json");					
 		}
 		br.close();		
 	}
 	
 	
+	/*
+	 Function to write the output into a file in a json format
+	 The jaon format is {business_id:"", reasons:"[]"}
+	 */
 	public void writeToFile(JSONObject json, String filePath) throws IOException
 	{		
 		FileWriter fw = new FileWriter(filePath, true);
@@ -310,6 +345,10 @@ public class Reason {
 		bw.close();
 	}
 	
+	
+	/*
+	 *Displays the results in the console
+	 */
 	public void displayResult(HashMap<String, Integer> result, String businessId) throws IOException
 	{
 		Reason obj = new Reason();
@@ -331,7 +370,9 @@ public class Reason {
 		}
 		json.put("Business_Id", businessId);
 		json.put("Reasons", reasons);
-		obj.writeToFile(json, "C:\\Users\\Pranav\\Desktop\\finalResult.json");
+		
+		//Write the results into a local file
+		obj.writeToFile(json, "C:\\Users\\Pranav\\Desktop\\finalResult5.json");
 		
 	}
 	
@@ -340,17 +381,17 @@ public class Reason {
 	{		
 		Reason obj = new Reason();	
 		
-		//obj.createJSON("C:/Users/Pranav/Downloads/verypositive");
-		obj.readJSON("E:\\positive.json");
-		//HashMap<String, Integer> result = new HashMap<>();
-		//String text = "Cold cheap beer. Great place. Good bar food. Good service. \n\nLooking for a great Pittsburgh style fish sandwich, this is the place to go. The breading is light, fish is more than plentiful and a good side of home cut fries. \n\nGood grilled chicken salads or steak.  Soup of day is homemade and lots of specials. Great place for lunch or bar snacks and beer.";
-		//String text1 = "These are some great cheesesteaks. I have come here multiplier times and have never left unhappy. The staff are nice and the food is delicious.  Also try the 'Cheesesteak Fries' they are freakin amazing! I am glad I work next to this place, always a great lunch";
+		//obj.createJSON("C:/Users/Pranav/Downloads/verynegative");
+		obj.readJSON("E:\\negative.json");
+		HashMap<String, Integer> result = new HashMap<>();
+		String text = "Cold cheap beer. Great place. Good bar food. Good service. \n\nLooking for a great Pittsburgh style fish sandwich, this is the place to go. The breading is light, fish is more than plentiful and a good side of home cut fries. \n\nGood grilled chicken salads or steak.  Soup of day is homemade and lots of specials. Great place for lunch or bar snacks and beer.";
+		String text1 = "They confuse SALT with SAUCE, they give you the wrong orders, the food is very mediocre, greasy, just like the staff's customer service.";
 		
 		//result = obj.getReason(text1);
 		
 		//Get the reasons
-		//result = obj.getReasonSentence(text1);
-		//obj.displayResult(result);	
+		result = obj.getReason(text1);
+		obj.displayResult(result, "");	
 		
 	}
 }
