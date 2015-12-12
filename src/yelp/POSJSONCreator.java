@@ -36,7 +36,7 @@ public class POSJSONCreator {
 	{
 		POSJSONCreator p = new POSJSONCreator();
 		//This is the path to the tagger downloaded from Stanford POS Tagger
-		String path = "C:/Users/Pranav/Downloads/stanford-postagger-2015-04-20/stanford-postagger-2015-04-20/models/english-left3words-distsim.tagger";
+		String path = Constants.TAGGER_FILE_PATH;
 		
 		//The text to be tagged is stripped and cleaned
 		text = text.toLowerCase();
