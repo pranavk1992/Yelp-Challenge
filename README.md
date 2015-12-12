@@ -3,7 +3,7 @@ Yelp Dataset Challenge
 
 Project work for ILS-Z534(Information Retrieval) Course.
 
-Team
+## Team
 ====
 
 * [Amritanshu Joshi](https://github.com/amritanshujoshi) (amrijosh@indiana.edu)
@@ -12,7 +12,7 @@ Team
 * Pranav Kulkarni 
 * Vishaka Brij
 
-Description
+## Description
 ===========
 
 The project comprised of 2 tasks:
