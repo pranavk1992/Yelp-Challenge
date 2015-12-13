@@ -36,4 +36,6 @@ For task 2 the Task2.java file is run and it flows in the following manner:
 
 The evaluation for task 1 was carried out by **Jae Eun Kum** using the WEKA Explorer interface. A java file by the name of **Classifier** was also written by Jae which could carry out that operation of classification and evaluation in the code.
 
-Also **Results** java file was written by **Anudhriti Katanguri** to find out if the indexes have properly been made in MongoDB.
+**Results** java file was written by **Anudhriti Katanguri** to find out if the indexes have properly been made in MongoDB.
+
+**Constants** java file was written by **Amritanshu Joshi** to hold the path strings for all the files used or created in the code.
