@@ -16,8 +16,9 @@ import weka.core.converters.ArffLoader;
  * ArffLoader.
  *
  * @author FracPete (fracpete at waikato dot ac dot nz)
+ * modified by Jae Eun Kum for our usage.
  */
-public class IncrementalClassifier {
+public class Classifier {
 
 	/**
 	 * Expects an ARFF file as first argument (class attribute is assumed to be
@@ -30,12 +31,9 @@ public class IncrementalClassifier {
 	 */
 	public static void classify(Instances data) throws Exception {
 		
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
-				"D:\\Lectures\\Fall 15\\Search\\ProjectFiles\\Classification.txt")));
 		// load data
 		ArffLoader loader = new ArffLoader();
-		loader.setFile(new File(
-				"D:\\Lectures\\Fall 15\\Search\\ProjectFiles\\reviewtipscategory.arff"));
+		loader.setFile(new File(Constants.ARFF_FILE_PATH));
 		Instances structure = loader.getStructure();
 		structure.setClassIndex(structure.numAttributes() - 1);
 
@@ -52,9 +50,6 @@ public class IncrementalClassifier {
 
 		 System.out.println("Trained!! " + "Started Writing....");
 		// output generated model
-		// System.out.println(nb);
-		 bw.write(nb.toString());
-		 bw.close();
 
 	}
 
@@ -62,16 +57,10 @@ public class IncrementalClassifier {
 			throws Exception {
 
 		System.out.println("Evaluating...");
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
-				"D:\\Lectures\\Fall 15\\Search\\ProjectFiles\\Evaluation.txt")));
 		data.setClassIndex(data.numAttributes()-1);
 		Evaluation eval = new Evaluation(data);
 		eval.crossValidateModel(nb, data, 10, new Random(1));
-		System.out.println("Writing Evaluation...");
 		System.out.println(eval.toSummaryString("\nResults\n=====\n", true));
-		bw.write(eval.fMeasure(1) + " " + eval.precision(1) + " "
-				+ eval.recall(1));
-		bw.close();
 
 	}
 }
