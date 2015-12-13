@@ -6,10 +6,10 @@ Project work for ILS-Z534(Information Retrieval) Course.
 ## Team
 
 * [Amritanshu Joshi](https://github.com/amritanshujoshi) (amrijosh@indiana.edu)
-* Dhriti Katanguri 
-* Jae Eun Kun 
-* Pranav Kulkarni 
-* Vishaka Brij
+* Anudhriti Katanguri (anukatan@indiana.edu) 
+* Jae Eun Kun (jaekum@indiana.edu)
+* Pranav Kulkarni (pnkulkar@indiana.edu)
+* Vishaka Brij (vbrij@indiana.edu)
 
 ## Description
 
